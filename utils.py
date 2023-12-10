@@ -95,3 +95,12 @@ def collate_batch(data, pad_index):
             'length': lengths  # The lengths of each sequence
         },
     }
+
+
+def decode_truth(encoded_truth, id_to_token, end_token):
+    encoded_truth = encoded_truth.tolist()
+    for i, token in enumerate(encoded_truth):
+        if token == end_token:
+            encoded_truth = encoded_truth[1:i]
+            break
+    return "".join([id_to_token[i] for i in encoded_truth])

@@ -1,3 +1,5 @@
+from typing import Any
+
 import lightning as pl
 import torch
 from torch import nn
@@ -115,6 +117,32 @@ class HMERecognizer(pl.LightningModule):
             'test_exp_rate_less_2': exp_rate_less_2,
             'test_exp_rate_less_3': exp_rate_less_3
         }
+
+    def predict_step(self, batch, batch_idx, dataloader_idx=0):
+        images = batch['image']
+        encoded_captions = batch['truth']['encoded']
+        caption_lengths = batch['truth']['length']
+        output = self(images, encoded_captions, caption_lengths)
+        preds = torch.argmax(output, dim=2)
+        preds = preds.cpu()
+        targets = encoded_captions.cpu()
+
+        result = []
+        for i in range(len(images)):
+            result.append({
+                'image': images[i],
+                'truth': {
+                    'text': encoded_captions[i],
+                    'encoded': encoded_captions[i],
+                    'length': caption_lengths[i]
+                },
+                'pred': {
+                    'text': preds[i],
+                    'encoded': preds[i],
+                    'length': caption_lengths[i]
+                }
+            })
+        return result
 
     def configure_optimizers(self):
         optimizer = torch.optim.Adam(self.parameters(), lr=self.lr)
