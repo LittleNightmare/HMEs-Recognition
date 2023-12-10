@@ -58,11 +58,14 @@ def main(args):
                                                    token_to_id=data_module.token_to_id, lr=args.lr,
                                                    encoder_out_dim=args.encoder_out_dim,
                                                    vocab_size=len(data_module.token_to_id))
-        for year in ['2013', '2014', '2016']:
-            test_dataloader = data_module.test_dataloader()[year]
+        results = {}
+        for year, dataloader in data_module.test_dataloader().items():
+            test_dataloader = dataloader
 
             # Run the test set through the trained model
-            trainer.test(model, dataloaders=test_dataloader)
+            results[year] = trainer.test(model, dataloaders=test_dataloader)
+        # generate confusion matrix based on results
+
     # generate 3 samples from the test set, and print them
     if args.sample:
         # checkpoint = torch.load(args.checkpoint_path)
@@ -96,5 +99,5 @@ def main(args):
 if __name__ == '__main__':
     # Parse the user inputs and defaults (returns a argparse.Namespace)
     args = parser.parse_args()
-    args.sample = True
+
     main(args)
