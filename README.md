@@ -33,6 +33,8 @@ data/
 ## Model
 The model is following the structure in the paper. The models are defined in `model`. The model is trained with the cross entropy loss.
 
+You may download the checkpoints from [Google Drive](https://drive.google.com/drive/folders/1g6LnaHuJkPI2z5X7Qh4Ms2HdZpSvlSxG?usp=drive_link
+)
 ## Training
 You can train the model with the following command:
 ```bash

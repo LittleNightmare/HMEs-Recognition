@@ -42,7 +42,7 @@ def main(args):
     callbacks = []
     if args.early_stop:
         callbacks.append(early_stop_callback_exp_rate)
-        callbacks.append(early_stop_callback_loss)
+        # callbacks.append(early_stop_callback_loss)
     if args.checkpoint:
         callbacks.append(checkpoint_callback_exp_rate_3)
         callbacks.append(checkpoint_callback_val_loss)
