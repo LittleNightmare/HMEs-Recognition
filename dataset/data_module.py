@@ -1,5 +1,6 @@
 # Step 3: Define the Data Module
 import os
+from functools import partial
 
 from torch.utils.data import DataLoader
 from torchvision import transforms
@@ -19,6 +20,8 @@ class MathExpressionDataModule(pl.LightningDataModule):
         self.num_workers = num_workers
         self.token_to_id, self.id_to_token = load_vocab(os.path.join(data_dir, tokens_file))
         self.pad_index = self.token_to_id[PAD]
+
+        self.collate_fn = partial(collate_batch, pad_index=self.pad_index)
         # simply transform
 
         self.transform_base = transforms.Compose([
@@ -77,13 +80,13 @@ class MathExpressionDataModule(pl.LightningDataModule):
             }
 
     def train_dataloader(self):
-        return DataLoader(self.train_dataset, batch_size=self.batch_size, shuffle=True, collate_fn=collate_batch,
+        return DataLoader(self.train_dataset, batch_size=self.batch_size, shuffle=True, collate_fn=self.collate_fn,
                           num_workers=self.num_workers)
 
     def val_dataloader(self):
-        return DataLoader(self.val_dataset, batch_size=self.batch_size, collate_fn=collate_batch,
+        return DataLoader(self.val_dataset, batch_size=self.batch_size, collate_fn=self.collate_fn,
                           num_workers=self.num_workers)
 
     def test_dataloader(self):
-        return {year: DataLoader(dataset, batch_size=self.batch_size, collate_fn=collate_batch, num_workers=self.num_workers)
+        return {year: DataLoader(dataset, batch_size=self.batch_size, collate_fn=self.collate_fn, num_workers=self.num_workers)
                 for year, dataset in self.test_datasets.items()}
