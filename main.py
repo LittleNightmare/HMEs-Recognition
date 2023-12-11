@@ -23,7 +23,7 @@ parser.add_argument("--encoder_out_dim", type=int, default=512)
 
 # Callbacks
 parser.add_argument("--early_stop", action='store_true')
-parser.add_argument("--checkpoint", action='store_true')
+parser.add_argument("--save_checkpoint", action='store_true')
 
 # Other arguments
 parser.add_argument("--train", action='store_true')
@@ -43,7 +43,7 @@ def main(args):
     if args.early_stop:
         callbacks.append(early_stop_callback_exp_rate)
         # callbacks.append(early_stop_callback_loss)
-    if args.checkpoint:
+    if args.save_checkpoint:
         callbacks.append(checkpoint_callback_exp_rate_3)
         callbacks.append(checkpoint_callback_val_loss)
 
